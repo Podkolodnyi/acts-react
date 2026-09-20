@@ -1,0 +1,22 @@
+import {
+    Navigate,
+    Outlet,
+    useLocation
+} from "react-router";
+
+export function ProtectedLayout() {
+    const isAuthenticated = true;
+    const location = useLocation();
+
+    if (!isAuthenticated) {
+        return (
+            <Navigate
+                to="/login"
+                replace
+                state={{ from: location }}
+            />
+        );
+    }
+
+    return <Outlet />;
+}

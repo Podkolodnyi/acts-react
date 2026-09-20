@@ -1,0 +1,161 @@
+.layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #f3f4f6;
+    color: #1f2937;
+}
+
+.header {
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding: 0 24px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
+}
+
+.brand {
+    flex-shrink: 0;
+}
+
+.brand h1 {
+    margin: 0;
+    font-size: 20px;
+    white-space: nowrap;
+}
+
+.topNav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+}
+
+.link {
+    color: #6b7280;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.link:hover {
+    color: #2563eb;
+}
+
+.active {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.userPanel {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.userName {
+    color: #4b5563;
+    font-size: 14px;
+}
+
+.logoutButton {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    color: #374151;
+    background: #ffffff;
+    cursor: pointer;
+    font: inherit;
+    font-size: 14px;
+}
+
+.logoutButton:hover {
+    border-color: #9ca3af;
+    background: #f9fafb;
+}
+
+.body {
+    display: flex;
+    flex: 1;
+}
+
+.sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    padding: 24px 16px;
+    border-right: 1px solid #e5e7eb;
+    background: #ffffff;
+}
+
+.sidebarNav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sidebarLink {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 6px;
+    color: #4b5563;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.sidebarLink:hover {
+    background: #f3f4f6;
+    color: #2563eb;
+}
+
+.sidebarLink.active {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.content {
+    flex: 1;
+    min-width: 0;
+    padding: 32px;
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-wrap: wrap;
+        gap: 16px;
+        padding: 16px;
+    }
+
+    .topNav {
+        order: 3;
+        flex-basis: 100%;
+    }
+
+    .userPanel {
+        margin-left: auto;
+    }
+
+    .body {
+        display: block;
+    }
+
+    .sidebar {
+        width: auto;
+        padding: 12px 16px;
+        border-right: 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .sidebarNav {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .sidebarLink {
+        white-space: nowrap;
+    }
+
+    .content {
+        padding: 24px 16px;
+    }
+}
