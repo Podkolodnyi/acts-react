@@ -20,3 +20,11 @@ export function getAdminEngineers(): Promise<AdminEngineer[]> {
 export function deleteEngineer(key: string): Promise<{ status: string }> {
   return apiDelete(`/api/admin/engineers/${key}`);
 }
+
+export function promoteEngineer(key: string): Promise<{ is_admin: boolean }> {
+  return apiPost(`/api/admin/engineers/${key}/promote`, {});
+}
+
+export function demoteEngineer(key: string): Promise<{ is_admin: boolean }> {
+  return apiPost(`/api/admin/engineers/${key}/demote`, {});
+}

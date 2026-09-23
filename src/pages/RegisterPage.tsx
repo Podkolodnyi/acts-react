@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router";
-import { ApiError } from "../api/client";
 import { register } from "../api/session";
+import { extractErrorMessage } from "../utils/apiError";
 import styles from "./EngineerSelectPage.module.css";
 
 export function RegisterPage() {
@@ -28,15 +28,11 @@ export function RegisterPage() {
             await register(firstName, lastName, password);
             setDone(true);
         } catch (err) {
-            const body = err instanceof ApiError ? err.body : null;
-            const serverMessage =
-                body && typeof body === "object" && "error" in body
-                    ? String((body as { error: unknown }).error)
-                    : null;
-
             setError(
-                serverMessage ??
+                extractErrorMessage(
+                    err,
                     "Не удалось отправить заявку — проверьте данные",
+                ),
             );
         } finally {
             setSubmitting(false);

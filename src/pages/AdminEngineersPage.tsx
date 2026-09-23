@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
-import { deleteEngineer, getAdminEngineers } from "../api/admin";
+import {
+    deleteEngineer,
+    demoteEngineer,
+    getAdminEngineers,
+    promoteEngineer,
+} from "../api/admin";
 import { useSession } from "../session/session-context";
+import { extractErrorMessage } from "../utils/apiError";
 import { formatEngineerName } from "../utils/engineerName";
 import type { AdminEngineer } from "../api/types";
 import styles from "./AdminPendingPage.module.css";
@@ -34,6 +40,23 @@ export function AdminEngineersPage() {
         }
     }
 
+    async function handleToggleAdmin(target: AdminEngineer) {
+        setError(null);
+
+        try {
+            if (target.is_admin) {
+                await demoteEngineer(target.id);
+            } else {
+                await promoteEngineer(target.id);
+            }
+            load();
+        } catch (err) {
+            setError(
+                extractErrorMessage(err, "Не удалось изменить права"),
+            );
+        }
+    }
+
     return (
         <div className={styles.page}>
             <h2 className={styles.title}>Инженеры</h2>
@@ -54,6 +77,16 @@ export function AdminEngineersPage() {
                         </div>
 
                         <div className={styles.actions}>
+                            <button
+                                className={styles.reject}
+                                type="button"
+                                onClick={() => handleToggleAdmin(engineer)}
+                            >
+                                {engineer.is_admin
+                                    ? "Убрать права админа"
+                                    : "Сделать админом"}
+                            </button>
+
                             <button
                                 className={styles.reject}
                                 type="button"
