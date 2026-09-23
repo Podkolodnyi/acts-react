@@ -3,15 +3,20 @@ import {
     Outlet,
     useLocation
 } from "react-router";
+import { useSession } from "../session/session-context";
 
 export function ProtectedLayout() {
-    const isAuthenticated = true;
+    const { engineer, status } = useSession();
     const location = useLocation();
 
-    if (!isAuthenticated) {
+    if (status === "loading") {
+        return null;
+    }
+
+    if (!engineer) {
         return (
             <Navigate
-                to="/login"
+                to="/engineer"
                 replace
                 state={{ from: location }}
             />

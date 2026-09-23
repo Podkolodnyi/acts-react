@@ -1,11 +1,22 @@
 import {
     NavLink,
-    Outlet
+    Outlet,
+    useNavigate
 } from "react-router";
 
+import { useSession } from "../session/session-context";
+import { formatEngineerName } from "../utils/engineerName";
 import styles from "./AppLayout.module.css";
 
 export function AppLayout() {
+    const { engineer, logout } = useSession();
+    const navigate = useNavigate();
+
+    async function handleLogout() {
+        await logout();
+        navigate("/engineer", { replace: true });
+    }
+
     return (
         <div className={styles.layout}>
             <header className={styles.header}>
@@ -48,16 +59,43 @@ export function AppLayout() {
                     >
                         Настройки
                     </NavLink>
+
+                    {engineer?.is_admin && (
+                        <>
+                            <NavLink
+                                to="/admin/pending"
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? `${styles.link} ${styles.active}`
+                                        : styles.link
+                                }
+                            >
+                                Заявки
+                            </NavLink>
+
+                            <NavLink
+                                to="/admin/engineers"
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? `${styles.link} ${styles.active}`
+                                        : styles.link
+                                }
+                            >
+                                Инженеры
+                            </NavLink>
+                        </>
+                    )}
                 </nav>
 
                 <div className={styles.userPanel}>
           <span className={styles.userName}>
-            Пользователь
+            {engineer && formatEngineerName(engineer)}
           </span>
 
                     <button
                         className={styles.logoutButton}
                         type="button"
+                        onClick={handleLogout}
                     >
                         Выйти
                     </button>

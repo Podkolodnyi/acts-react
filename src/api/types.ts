@@ -1,7 +1,33 @@
 export interface Engineer {
   id: string;
   name: string;
+  first_name: string;
   code: string;
+  is_admin: boolean;
+}
+
+export interface EngineerOption {
+  id: string;
+  name: string;
+  first_name: string;
+  code: string;
+  has_password: boolean;
+}
+
+export interface PendingEngineer {
+  id: string;
+  name: string;
+  first_name: string;
+  code: string;
+  created_at: string;
+}
+
+export interface AdminEngineer {
+  id: string;
+  name: string;
+  first_name: string;
+  code: string;
+  is_admin: boolean;
 }
 
 export interface Device {

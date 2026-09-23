@@ -3,16 +3,24 @@ import {AuthLayout} from "./layouts/AuthLayout.tsx";
 import {ProtectedLayout} from "./layouts/ProtectedLayout.tsx";
 import {AppLayout} from "./layouts/AppLayout.tsx";
 import {HomePage} from "./pages/HomePage.tsx";
+import {EngineerSelectPage} from "./pages/EngineerSelectPage.tsx";
+import {RegisterPage} from "./pages/RegisterPage.tsx";
+import {AdminPendingPage} from "./pages/AdminPendingPage.tsx";
+import {AdminEngineersPage} from "./pages/AdminEngineersPage.tsx";
 
 export const router = createBrowserRouter([
     {
         element: <AuthLayout/>,
         children: [
-/*            {
-                path: "login",
-                element: <LoginPage/>
+            {
+                path: "engineer",
+                element: <EngineerSelectPage/>
             },
             {
+                path: "engineer/register",
+                element: <RegisterPage/>
+            },
+/*            {
                 path: "forgot-password",
                 element: <ForgotPasswordPage/>
             }*/
@@ -27,6 +35,14 @@ export const router = createBrowserRouter([
                     {
                         index: true,
                         element: <HomePage/>
+                    },
+                    {
+                        path: "admin/pending",
+                        element: <AdminPendingPage/>
+                    },
+                    {
+                        path: "admin/engineers",
+                        element: <AdminEngineersPage/>
                     },
 /*                    {
                         path: "acts",

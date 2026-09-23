@@ -1,6 +1,6 @@
 import { apiGet } from "./client";
-import type { Engineer } from "./types";
+import type { EngineerOption } from "./types";
 
-export function getEngineers(): Promise<Engineer[]> {
+export function getEngineers(): Promise<EngineerOption[]> {
   return apiGet("/api/engineers");
 }

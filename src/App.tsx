@@ -1,6 +1,11 @@
 import {RouterProvider} from "react-router";
 import {router} from "./router.tsx";
+import {SessionProvider} from "./session/SessionContext.tsx";
 
 export default function App() {
-    return <RouterProvider router={router}/>
+    return (
+        <SessionProvider>
+            <RouterProvider router={router}/>
+        </SessionProvider>
+    );
 }

@@ -1,0 +1,95 @@
+.page {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.title {
+    margin: 0 0 20px;
+    color: #111827;
+    font-size: 22px;
+}
+
+.empty {
+    padding: 32px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #6b7280;
+    font-size: 14px;
+    text-align: center;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 20px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.name {
+    color: #111827;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.meta {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.approve,
+.reject {
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.approve {
+    border: none;
+    color: #ffffff;
+    background: #16a34a;
+}
+
+.approve:hover {
+    background: #15803d;
+}
+
+.reject {
+    border: 1px solid #d1d5db;
+    color: #374151;
+    background: #ffffff;
+}
+
+.reject:hover {
+    background: #f9fafb;
+}
+
+.reject:disabled {
+    color: #9ca3af;
+    background: #f9fafb;
+    cursor: not-allowed;
+}
