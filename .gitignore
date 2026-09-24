@@ -32,6 +32,9 @@ dist/
 # Настройки IDE
 .idea/
 
+# Локальный конфиг превью Claude Code
+.claude/
+
 # Локальные переменные React, если появятся
 .env
 .env.local

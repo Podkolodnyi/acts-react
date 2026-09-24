@@ -1,6 +1,23 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router";
+import { getActs } from "../api/acts";
+import type { ActListItem } from "../api/types";
 import styles from "./HomePage.module.css";
 
 export function HomePage() {
+    const [acts, setActs] = useState<ActListItem[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        getActs()
+            .then(setActs)
+            .finally(() => setLoading(false));
+    }, []);
+
+    const draftCount = acts.filter((act) => act.status === "draft").length;
+    const completedCount = acts.filter((act) => act.status === "completed").length;
+    const recentActs = acts.slice(0, 5);
+
     return (
         <section className={styles.page}>
             <div className={styles.header}>
@@ -15,12 +32,12 @@ export function HomePage() {
                 </div>
 
                 <div className={styles.actions}>
-                    <a
+                    <Link
                         className={styles.primaryButton}
-                        href="/acts/new"
+                        to="/acts/new"
                     >
                         Создать акт
-                    </a>
+                    </Link>
                 </div>
             </div>
 
@@ -31,7 +48,7 @@ export function HomePage() {
           </span>
 
                     <strong className={styles.cardValue}>
-                        0
+                        {loading ? "…" : acts.length}
                     </strong>
 
                     <span className={styles.cardDescription}>
@@ -45,7 +62,7 @@ export function HomePage() {
           </span>
 
                     <strong className={styles.cardValue}>
-                        0
+                        {loading ? "…" : draftCount}
                     </strong>
 
                     <span className={styles.cardDescription}>
@@ -59,7 +76,7 @@ export function HomePage() {
           </span>
 
                     <strong className={styles.cardValue}>
-                        0
+                        {loading ? "…" : completedCount}
                     </strong>
 
                     <span className={styles.cardDescription}>
@@ -75,31 +92,51 @@ export function HomePage() {
                             Последние акты
                         </h3>
 
-                        <a
+                        <Link
                             className={styles.panelLink}
-                            href="/acts"
+                            to="/acts"
                         >
                             Все акты
-                        </a>
+                        </Link>
                     </div>
 
-                    <div className={styles.emptyState}>
-                        <p className={styles.emptyTitle}>
-                            Актов пока нет
-                        </p>
+                    {!loading && recentActs.length === 0 ? (
+                        <div className={styles.emptyState}>
+                            <p className={styles.emptyTitle}>
+                                Актов пока нет
+                            </p>
 
-                        <p className={styles.emptyDescription}>
-                            Создайте первый акт ремонта, чтобы он появился
-                            в этом списке.
-                        </p>
+                            <p className={styles.emptyDescription}>
+                                Создайте первый акт ремонта, чтобы он появился
+                                в этом списке.
+                            </p>
 
-                        <a
-                            className={styles.secondaryButton}
-                            href="/acts/new"
-                        >
-                            Создать первый акт
-                        </a>
-                    </div>
+                            <Link
+                                className={styles.secondaryButton}
+                                to="/acts/new"
+                            >
+                                Создать первый акт
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className={styles.quickActions}>
+                            {recentActs.map((act) => (
+                                <Link
+                                    key={act.id}
+                                    className={styles.quickAction}
+                                    to={`/acts/${act.id}`}
+                                >
+                                    <span className={styles.quickActionTitle}>
+                                        {act.act_number || "Без номера"} · {act.customer_name || "—"}
+                                    </span>
+
+                                    <span className={styles.quickActionDescription}>
+                                        {act.engineer_name} · {act.device_model || "—"}
+                                    </span>
+                                </Link>
+                            ))}
+                        </div>
+                    )}
                 </section>
 
                 <section className={styles.panel}>
@@ -110,9 +147,9 @@ export function HomePage() {
                     </div>
 
                     <div className={styles.quickActions}>
-                        <a
+                        <Link
                             className={styles.quickAction}
-                            href="/acts/new"
+                            to="/acts/new"
                         >
               <span className={styles.quickActionTitle}>
                 Новый акт
@@ -121,11 +158,11 @@ export function HomePage() {
                             <span className={styles.quickActionDescription}>
                 Создать акт ремонта
               </span>
-                        </a>
+                        </Link>
 
-                        <a
+                        <Link
                             className={styles.quickAction}
-                            href="/acts"
+                            to="/acts"
                         >
               <span className={styles.quickActionTitle}>
                 Список актов
@@ -134,11 +171,11 @@ export function HomePage() {
                             <span className={styles.quickActionDescription}>
                 Найти или открыть акт
               </span>
-                        </a>
+                        </Link>
 
-                        <a
+                        <Link
                             className={styles.quickAction}
-                            href="/settings"
+                            to="/settings"
                         >
               <span className={styles.quickActionTitle}>
                 Настройки
@@ -147,7 +184,7 @@ export function HomePage() {
                             <span className={styles.quickActionDescription}>
                 Настроить приложение
               </span>
-                        </a>
+                        </Link>
                     </div>
                 </section>
             </div>
