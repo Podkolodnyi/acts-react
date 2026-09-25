@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router";
+import { PasswordInput } from "../components/PasswordInput";
 import { register } from "../api/session";
 import { extractErrorMessage } from "../utils/apiError";
 import styles from "./EngineerSelectPage.module.css";
@@ -77,20 +78,16 @@ export function RegisterPage() {
                 onChange={(event) => setLastName(event.target.value)}
             />
 
-            <input
-                className={styles.input}
-                type="password"
+            <PasswordInput
                 placeholder="Пароль"
                 value={password}
-                onChange={(event) => setPassword(event.target.value)}
+                onChange={setPassword}
             />
 
-            <input
-                className={styles.input}
-                type="password"
+            <PasswordInput
                 placeholder="Повторите пароль"
                 value={confirmPassword}
-                onChange={(event) => setConfirmPassword(event.target.value)}
+                onChange={setConfirmPassword}
             />
 
             <button

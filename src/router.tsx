@@ -9,6 +9,7 @@ import {RegisterPage} from "./pages/RegisterPage.tsx";
 import {AdminPendingPage} from "./pages/AdminPendingPage.tsx";
 import {AdminEngineersPage} from "./pages/AdminEngineersPage.tsx";
 import {ActsPage} from "./pages/ActsPage.tsx";
+import {ActDetailsPage} from "./pages/ActDetailsPage.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -55,13 +56,13 @@ export const router = createBrowserRouter([
                         path: "acts",
                         element: <ActsPage/>
                     },
+                    {
+                        path: "acts/:id",
+                        element: <ActDetailsPage/>
+                    },
 /*                    {
                         path: "acts/new",
                         element: <ActFormPage />,
-                    },
-                    {
-                        path: "acts/:id",
-                        element: <ActDetailsPage />,
                     },
                     {
                         path: "settings",

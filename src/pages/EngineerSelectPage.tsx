@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router";
+import { PasswordInput } from "../components/PasswordInput";
 import { getEngineers } from "../api/engineers";
 import { claimAccount, login } from "../api/session";
 import { useSession } from "../session/session-context";
@@ -145,22 +146,18 @@ export function EngineerSelectPage() {
                 />
             )}
 
-            <input
-                className={styles.input}
-                type="password"
+            <PasswordInput
                 placeholder="Пароль"
                 autoFocus={selectedEngineer.has_password}
                 value={password}
-                onChange={(event) => setPassword(event.target.value)}
+                onChange={setPassword}
             />
 
             {!selectedEngineer.has_password && (
-                <input
-                    className={styles.input}
-                    type="password"
+                <PasswordInput
                     placeholder="Повторите пароль"
                     value={confirmPassword}
-                    onChange={(event) => setConfirmPassword(event.target.value)}
+                    onChange={setConfirmPassword}
                 />
             )}
 
