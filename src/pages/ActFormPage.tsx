@@ -3,7 +3,10 @@ import { Link, useNavigate, useParams } from "react-router";
 import { createAct, getAct, repairAct, updateAct } from "../api/acts";
 import { ApiError } from "../api/client";
 import { searchDevices } from "../api/devices";
+import { ChangesDialog } from "../components/ChangesDialog";
 import { MaterialsEditor } from "../components/MaterialsEditor";
+import { useSession } from "../session/session-context";
+import { getActChanges, type ActChange } from "../utils/actChanges";
 import { extractErrorMessage } from "../utils/apiError";
 import type {
     ActDetail,
@@ -83,7 +86,10 @@ interface ActFormProps {
 
 function ActForm({ mode, actId }: ActFormProps) {
     const navigate = useNavigate();
+    const { engineer } = useSession();
     const needsSource = mode === "edit" || mode === "repair";
+    // Номер акта вручную правит только админ и только при редактировании.
+    const canEditNumber = mode === "edit" && Boolean(engineer?.is_admin);
 
     // Акт, который редактируем или ремонтируем.
     const [source, setSource] = useState<ActDetail | null>(null);
@@ -97,12 +103,15 @@ function ActForm({ mode, actId }: ActFormProps) {
     const [condition, setCondition] = useState<DeviceCondition | "">("");
     const [materials, setMaterials] = useState<Material[]>([]);
     const [sourceDeviceId, setSourceDeviceId] = useState<number | null>(null);
+    const [actNumber, setActNumber] = useState("");
 
     const [devices, setDevices] = useState<Device[] | null>(null);
     const [searching, setSearching] = useState(false);
 
     const [error, setError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
+    // Список изменений для окна подтверждения (только при редактировании).
+    const [pendingChanges, setPendingChanges] = useState<ActChange[] | null>(null);
 
     useEffect(() => {
         if (!needsSource || actId === null) return;
@@ -124,6 +133,7 @@ function ActForm({ mode, actId }: ActFormProps) {
                 );
                 setMaterials(act.materials);
                 setSourceDeviceId(act.source_device_id);
+                setActNumber(act.act_number);
                 setLoading(false);
             })
             .catch((err) => {
@@ -174,9 +184,26 @@ function ActForm({ mode, actId }: ActFormProps) {
         setDevices(null);
     }
 
-    async function handleSubmit(event: FormEvent) {
+    function handleSubmit(event: FormEvent) {
         event.preventDefault();
 
+        // При редактировании сначала показываем, что изменится.
+        if (mode === "edit" && source) {
+            setPendingChanges(
+                getActChanges(
+                    source,
+                    fields,
+                    materials,
+                    canEditNumber ? actNumber : null,
+                ),
+            );
+            return;
+        }
+
+        save();
+    }
+
+    async function save() {
         const payload: ActPayload = {
             ...fields,
             materials,
@@ -187,6 +214,9 @@ function ActForm({ mode, actId }: ActFormProps) {
         }
         if (!isThermo) {
             payload.device_condition = condition;
+        }
+        if (canEditNumber) {
+            payload.act_number = actNumber;
         }
 
         setSubmitting(true);
@@ -205,6 +235,7 @@ function ActForm({ mode, actId }: ActFormProps) {
         } catch (err) {
             setError(extractErrorMessage(err, "Не удалось сохранить акт"));
             setSubmitting(false);
+            setPendingChanges(null);
         }
     }
 
@@ -266,6 +297,26 @@ function ActForm({ mode, actId }: ActFormProps) {
                 )}
 
                 {error && <p className={styles.error}>{error}</p>}
+
+                {canEditNumber && (
+                    <label className={styles.field}>
+                        <span className={styles.label}>Номер акта *</span>
+                        <input
+                            className={styles.input}
+                            required
+                            value={actNumber}
+                            onChange={(event) => setActNumber(event.target.value)}
+                        />
+                        {source && actNumber.trim() !== source.act_number && (
+                            <span className={styles.warning}>
+                                Новые акты нумеруются как «наибольший номер в месяце + 1».
+                                Если новый номер больше текущих, пропущенные номера
+                                выдаваться не будут. Прежний номер {source.act_number}{" "}
+                                освободится и может достаться следующему новому акту.
+                            </span>
+                        )}
+                    </label>
+                )}
 
                 <label className={styles.field}>
                     <span className={styles.label}>Заказчик *</span>
@@ -454,6 +505,15 @@ function ActForm({ mode, actId }: ActFormProps) {
                     </Link>
                 </div>
             </form>
+
+            {pendingChanges && (
+                <ChangesDialog
+                    changes={pendingChanges}
+                    saving={submitting}
+                    onConfirm={save}
+                    onCancel={() => setPendingChanges(null)}
+                />
+            )}
         </div>
     );
 }

@@ -1,0 +1,157 @@
+.page {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.title {
+    margin: 0 0 20px;
+    color: #111827;
+    font-size: 28px;
+    line-height: 1.2;
+}
+
+.error {
+    margin: 0 0 16px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    background: #fef2f2;
+    color: #b91c1c;
+    font-size: 14px;
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.purge {
+    display: flex;
+    gap: 8px;
+}
+
+.select {
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #ffffff;
+    font: inherit;
+    font-size: 14px;
+    color: #1f2937;
+}
+
+.dangerButton {
+    padding: 8px 14px;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #b91c1c;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.dangerButton:hover {
+    background: #fef2f2;
+}
+
+.dangerButton:disabled {
+    border-color: #e5e7eb;
+    color: #9ca3af;
+    background: #ffffff;
+    cursor: default;
+}
+
+.empty {
+    padding: 48px 24px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #6b7280;
+    text-align: center;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    font-size: 14px;
+}
+
+.table th {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e5e7eb;
+    color: #6b7280;
+    font-weight: 500;
+    text-align: left;
+}
+
+.table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    color: #1f2937;
+}
+
+.checkColumn {
+    width: 32px;
+}
+
+.number {
+    white-space: nowrap;
+}
+
+.thermo {
+    margin-left: 6px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: #f3f4f6;
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.link {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.rowActions {
+    white-space: nowrap;
+}
+
+.rowActions > * + * {
+    margin-left: 12px;
+}
+
+.linkButton {
+    padding: 0;
+    border: none;
+    background: none;
+    color: #2563eb;
+    font: inherit;
+    cursor: pointer;
+}
+
+.linkButton:hover {
+    text-decoration: underline;
+}
+
+.linkButton:disabled {
+    color: #9ca3af;
+    cursor: default;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 700px) {
+    .table {
+        display: block;
+        overflow-x: auto;
+    }
+}

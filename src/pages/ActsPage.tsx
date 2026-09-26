@@ -98,7 +98,7 @@ export function ActsPage() {
                     className={`${styles.tab} ${!isThermo ? styles.tabActive : ""}`}
                     to="/acts"
                 >
-                    Обычные акты
+                    Аппараты
                 </Link>
                 <Link
                     className={`${styles.tab} ${isThermo ? styles.tabActive : ""}`}

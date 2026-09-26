@@ -1,0 +1,84 @@
+.act {
+    padding: 32px 40px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.actTitle {
+    margin: 0;
+    color: #111827;
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: 0.02em;
+}
+
+.actNumber {
+    margin: 4px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+    text-align: center;
+}
+
+.customerBlock {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.customerLabel {
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.customerName {
+    margin-top: 4px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #d1d5db;
+    color: #111827;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.section {
+    margin-top: 24px;
+}
+
+.sectionTitle {
+    margin: 0 0 10px;
+    color: #1f2937;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table td {
+    padding: 8px 10px;
+    border: 1px solid #e5e7eb;
+    font-size: 14px;
+}
+
+.table .label {
+    width: 35%;
+    color: #6b7280;
+    background: #f9fafb;
+}
+
+.table .value {
+    color: #1f2937;
+}
+
+.text {
+    margin: 0;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #f9fafb;
+    color: #1f2937;
+    font-size: 14px;
+    white-space: pre-line;
+}

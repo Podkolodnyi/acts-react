@@ -1,4 +1,4 @@
-import { apiGet, apiPost, apiPut } from "./client";
+import { apiDelete, apiGet, apiPost, apiPut } from "./client";
 import type {
   ActDetail,
   ActFilters,
@@ -30,6 +30,13 @@ export function createAct(payload: ActPayload): Promise<ActDetail> {
 
 export function updateAct(id: number, payload: ActPayload): Promise<ActDetail> {
   return apiPut(`/api/acts/${id}`, payload);
+}
+
+// Переносит акт в «Удалённые акты»: он получает номер DEL-NNNN.
+export function deleteAct(
+  id: number,
+): Promise<{ status: string; act_number: string }> {
+  return apiDelete(`/api/acts/${id}`);
 }
 
 // Создаёт копию акта «Не работает» с состоянием «Работает».

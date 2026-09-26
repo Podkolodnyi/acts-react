@@ -105,11 +105,51 @@ export interface ActDetail extends ActListItem, ActFields {
   materials: Material[];
   can_edit: boolean;
   can_repair: boolean;
+  can_delete: boolean;
+  // Удалённый акт видит только админ. act_number у него — DEL-NNNN,
+  // прежний номер хранится в original_act_number.
+  is_deleted: boolean;
+  deleted_at: string;
+  deleted_by_name: string;
+  original_act_number: string;
 }
+
+export interface DeletedAct {
+  id: number;
+  act_number: string;
+  original_act_number: string;
+  number_type: ActNumberType;
+  customer_name: string;
+  engineer_name: string;
+  deleted_at: string;
+  deleted_by_name: string;
+}
+
+// Сохранённое прежнее состояние акта (видит только админ).
+export interface ActVersion {
+  id: number;
+  act_id: number;
+  version_number: string;       // номер акта на момент сохранения + /N
+  created_at: string;           // когда акт изменили
+  created_by_name: string;      // кто изменил
+  current_act_number: string;
+  act_deleted: boolean;
+  number_type: ActNumberType;
+  customer_name: string;
+}
+
+export interface ActVersionDetail extends ActVersion {
+  act: ActDetail;               // снимок акта до изменения
+}
+
+// all — все удалённые, month / week — удалённые за последние 30 / 7 дней.
+export type PurgePeriod = "all" | "month" | "week";
 
 // Тело запроса на создание / изменение / ремонт акта.
 export interface ActPayload extends ActFields {
   number_type?: ActNumberType;
+  // Меняет номер акта; сервер принимает только от админа.
+  act_number?: string;
   device_condition?: DeviceCondition | "";
   source_device_id: number | null;
   materials: Material[];

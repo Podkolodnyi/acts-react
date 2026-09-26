@@ -83,6 +83,39 @@ export function AppLayout() {
                             >
                                 Инженеры
                             </NavLink>
+
+                            <NavLink
+                                to="/admin/deleted-acts"
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? `${styles.link} ${styles.active}`
+                                        : styles.link
+                                }
+                            >
+                                Удалённые
+                            </NavLink>
+
+                            <NavLink
+                                to="/admin/act-versions"
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? `${styles.link} ${styles.active}`
+                                        : styles.link
+                                }
+                            >
+                                Версии
+                            </NavLink>
+
+                            <NavLink
+                                to="/admin/devices"
+                                className={({ isActive }) =>
+                                    isActive
+                                        ? `${styles.link} ${styles.active}`
+                                        : styles.link
+                                }
+                            >
+                                Справочник
+                            </NavLink>
                         </>
                     )}
                 </nav>

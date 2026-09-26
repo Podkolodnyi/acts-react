@@ -60,6 +60,15 @@
     font-size: 14px;
 }
 
+.warning {
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: #fffbeb;
+    color: #92400e;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
 .field {
     display: flex;
     flex-direction: column;

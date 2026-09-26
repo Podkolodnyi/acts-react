@@ -11,6 +11,10 @@ import {AdminEngineersPage} from "./pages/AdminEngineersPage.tsx";
 import {ActsPage} from "./pages/ActsPage.tsx";
 import {ActDetailsPage} from "./pages/ActDetailsPage.tsx";
 import {ActFormPage} from "./pages/ActFormPage.tsx";
+import {AdminDeletedActsPage} from "./pages/AdminDeletedActsPage.tsx";
+import {AdminDevicesPage} from "./pages/AdminDevicesPage.tsx";
+import {AdminActVersionsPage} from "./pages/AdminActVersionsPage.tsx";
+import {AdminActVersionPage} from "./pages/AdminActVersionPage.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -50,6 +54,22 @@ export const router = createBrowserRouter([
                             {
                                 path: "admin/engineers",
                                 element: <AdminEngineersPage/>
+                            },
+                            {
+                                path: "admin/deleted-acts",
+                                element: <AdminDeletedActsPage/>
+                            },
+                            {
+                                path: "admin/devices",
+                                element: <AdminDevicesPage/>
+                            },
+                            {
+                                path: "admin/act-versions",
+                                element: <AdminActVersionsPage/>
+                            },
+                            {
+                                path: "admin/act-versions/:id",
+                                element: <AdminActVersionPage/>
                             },
                         ],
                     },

@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router";
-import { getAct } from "../api/acts";
+import { Link, useNavigate, useParams } from "react-router";
+import { deleteAct, getAct } from "../api/acts";
 import { ApiError } from "../api/client";
+import { ActDocument } from "../components/ActDocument";
 import { ActStateBadge } from "../components/ActStateBadge";
+import { extractErrorMessage } from "../utils/apiError";
 import type { ActDetail } from "../api/types";
 import styles from "./ActDetailsPage.module.css";
 
@@ -11,6 +13,9 @@ export function ActDetailsPage() {
     const [act, setAct] = useState<ActDetail | null>(null);
     const [notFound, setNotFound] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [deleting, setDeleting] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!id) return;
@@ -52,15 +57,36 @@ export function ActDetailsPage() {
     }
 
     const isThermo = act.number_type === "thermo";
+    const listPath = act.is_deleted
+        ? "/admin/deleted-acts"
+        : isThermo
+          ? "/acts?type=thermo"
+          : "/acts";
+
+    async function handleDelete() {
+        if (!act) return;
+        const confirmed = window.confirm(
+            `Удалить акт ${act.act_number}? Он будет перенесён в удалённые, ` +
+                "а его номер освободится.",
+        );
+        if (!confirmed) return;
+
+        setDeleting(true);
+        setError(null);
+        try {
+            await deleteAct(act.id);
+            navigate(isThermo ? "/acts?type=thermo" : "/acts");
+        } catch (err) {
+            setError(extractErrorMessage(err, "Не удалось удалить акт"));
+            setDeleting(false);
+        }
+    }
 
     return (
         <div className={styles.page}>
             <div className={styles.topBar}>
-                <Link
-                    className={styles.back}
-                    to={isThermo ? "/acts?type=thermo" : "/acts"}
-                >
-                    ← К списку актов
+                <Link className={styles.back} to={listPath}>
+                    ← {act.is_deleted ? "К удалённым актам" : "К списку актов"}
                 </Link>
 
                 <div className={styles.actions}>
@@ -80,9 +106,19 @@ export function ActDetailsPage() {
                             Редактировать
                         </Link>
                     )}
-                    <ActStateBadge state={act.state} />
+                    {!act.is_deleted && <ActStateBadge state={act.state} />}
                 </div>
             </div>
+
+            {error && <p className={styles.error}>{error}</p>}
+
+            {act.is_deleted && (
+                <p className={styles.deletedNote}>
+                    Акт удалён {act.deleted_at.slice(0, 10)}
+                    {act.deleted_by_name && ` (${act.deleted_by_name})`}.
+                    Прежний номер: <strong>{act.original_act_number || "—"}</strong>
+                </p>
+            )}
 
             {act.repaired_by && (
                 <p className={styles.linkNote}>
@@ -101,125 +137,20 @@ export function ActDetailsPage() {
                 </p>
             )}
 
-            <div className={styles.act}>
-                <h1 className={styles.actTitle}>
-                    {isThermo
-                        ? "Акт ремонта узла терморегистрации"
-                        : "Акт приёма-сдачи выполненных работ"}
-                </h1>
-                <p className={styles.actNumber}>
-                    № {act.act_number || "без номера"}
-                </p>
+            <ActDocument act={act} />
 
-                <div className={styles.customerBlock}>
-                    <div className={styles.customerLabel}>Заказчик</div>
-                    <div className={styles.customerName}>
-                        {act.customer_name || "—"}
-                    </div>
+            {act.can_delete && (
+                <div className={styles.bottomActions}>
+                    <button
+                        className={styles.dangerButton}
+                        type="button"
+                        disabled={deleting}
+                        onClick={handleDelete}
+                    >
+                        {deleting ? "Удаление..." : "Удалить акт"}
+                    </button>
                 </div>
-
-                {!isThermo && (
-                    <div className={styles.section}>
-                        <h2 className={styles.sectionTitle}>Сведения об аппарате</h2>
-                        <table className={styles.table}>
-                            <tbody>
-                                <tr>
-                                    <td className={styles.label}>Модель</td>
-                                    <td className={styles.value}>
-                                        {act.device_model || "—"}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td className={styles.label}>Серийный номер</td>
-                                    <td className={styles.value}>
-                                        {act.serial_number || "—"}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td className={styles.label}>Счётчик ч/б</td>
-                                    <td className={styles.value}>
-                                        {act.counter_bw || "—"}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td className={styles.label}>Счётчик цветной</td>
-                                    <td className={styles.value}>
-                                        {act.counter_color || "—"}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                )}
-
-                <div className={styles.section}>
-                    <h2 className={styles.sectionTitle}>Исполнитель и дата</h2>
-                    <table className={styles.table}>
-                        <tbody>
-                            <tr>
-                                <td className={styles.label}>Инженер</td>
-                                <td className={styles.value}>
-                                    {act.engineer_name || "—"}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td className={styles.label}>Дата работ</td>
-                                <td className={styles.value}>
-                                    {act.work_date || "—"}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                {!isThermo && (
-                    <>
-                        <div className={styles.section}>
-                            <h2 className={styles.sectionTitle}>
-                                Состояние аппарата после выполнения работ
-                            </h2>
-                            <p className={styles.text}>{act.device_condition || "—"}</p>
-                        </div>
-
-                        <div className={styles.section}>
-                            <h2 className={styles.sectionTitle}>Выполненные работы</h2>
-                            <p className={styles.text}>{act.works_text || "—"}</p>
-                        </div>
-                    </>
-                )}
-
-                <div className={styles.section}>
-                    <h2 className={styles.sectionTitle}>ЗИП</h2>
-                    {act.materials.length === 0 ? (
-                        <p className={styles.text}>—</p>
-                    ) : (
-                        <table className={styles.table}>
-                            <thead>
-                                <tr>
-                                    <td className={styles.label}>Наименование</td>
-                                    <td className={styles.label}>Артикул</td>
-                                    <td className={styles.label}>Кол-во</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {act.materials.map((item, index) => (
-                                    <tr key={index}>
-                                        <td className={styles.value}>
-                                            {item.name || "—"}
-                                        </td>
-                                        <td className={styles.value}>
-                                            {item.article || "—"}
-                                        </td>
-                                        <td className={styles.value}>
-                                            {item.quantity || "—"}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
-                </div>
-            </div>
+            )}
         </div>
     );
 }
