@@ -42,7 +42,9 @@ function describeMaterial(item: Material): string {
 
 function materialKeys(items: Material[]): string[] {
     return items
-        .filter((item) => normalize(item.name + item.article + item.quantity))
+        // Строка без наименования и артикула пустая: количество в ней
+        // всегда 1 по умолчанию, сервер такую строку не сохраняет.
+        .filter((item) => normalize(item.name + item.article))
         .map(describeMaterial);
 }
 

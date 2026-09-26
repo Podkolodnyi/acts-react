@@ -3,6 +3,9 @@ import { Link, useSearchParams } from "react-router";
 import { getActs } from "../api/acts";
 import { getEngineers } from "../api/engineers";
 import { ActStateBadge } from "../components/ActStateBadge";
+import { CopyButton } from "../components/CopyButton";
+import { DatePicker } from "../components/DatePicker";
+import { SearchSelect } from "../components/SearchSelect";
 import { formatEngineerName } from "../utils/engineerName";
 import type { ActListItem, EngineerOption } from "../api/types";
 import styles from "./ActsPage.module.css";
@@ -84,7 +87,7 @@ export function ActsPage() {
 
                 {isThermo ? (
                     <Link className={styles.primaryButton} to="/acts/new-thermo">
-                        Создать акт ремонта узла терморегистрации
+                        Создать акт ремонта узла термозакрепления
                     </Link>
                 ) : (
                     <Link className={styles.primaryButton} to="/acts/new">
@@ -104,7 +107,7 @@ export function ActsPage() {
                     className={`${styles.tab} ${isThermo ? styles.tabActive : ""}`}
                     to="/acts?type=thermo"
                 >
-                    Узлы терморегистрации
+                    Узлы термозакрепления
                 </Link>
             </div>
 
@@ -128,21 +131,19 @@ export function ActsPage() {
                             className={styles.input}
                             name="q"
                             defaultValue={q}
-                            placeholder="Номер, серийник, клиент, модель"
+                            placeholder="Номер, серийный номер, клиент, модель"
                         />
 
-                        <select
-                            className={styles.input}
+                        <SearchSelect
                             name="engineer"
+                            inputClassName={styles.input}
+                            emptyLabel="Все инженеры"
                             defaultValue={engineer}
-                        >
-                            <option value="">Все инженеры</option>
-                            {engineers.map((item) => (
-                                <option key={item.id} value={item.id}>
-                                    {formatEngineerName(item)}
-                                </option>
-                            ))}
-                        </select>
+                            options={engineers.map((item) => ({
+                                value: item.id,
+                                label: formatEngineerName(item),
+                            }))}
+                        />
 
                         <select className={styles.input} name="state" defaultValue={state}>
                             <option value="">Все состояния</option>
@@ -152,18 +153,16 @@ export function ActsPage() {
                     </>
                 )}
 
-                <input
-                    className={styles.input}
-                    type="date"
+                <DatePicker
                     name="date_from"
                     defaultValue={dateFrom}
+                    inputClassName={styles.input}
                 />
 
-                <input
-                    className={styles.input}
-                    type="date"
+                <DatePicker
                     name="date_to"
                     defaultValue={dateTo}
+                    inputClassName={styles.input}
                 />
 
                 <div className={styles.filterActions}>
@@ -201,7 +200,12 @@ export function ActsPage() {
                         {acts.map((act) => (
                             <tr key={act.id}>
                                 <td>{act.act_number || "—"}</td>
-                                <td>{act.customer_name || "—"}</td>
+                                <td className={styles.copyCell}>
+                                    {act.customer_name || "—"}
+                                    {act.customer_name && (
+                                        <CopyButton text={act.customer_name} className={styles.copy} />
+                                    )}
+                                </td>
                                 <td>{act.engineer_name}</td>
                                 <td>{act.created_at.slice(0, 10)}</td>
                                 <td>
@@ -235,9 +239,19 @@ export function ActsPage() {
                                 <td>
                                     <ActStateBadge state={act.state} />
                                 </td>
-                                <td>{act.customer_name || "—"}</td>
+                                <td className={styles.copyCell}>
+                                    {act.customer_name || "—"}
+                                    {act.customer_name && (
+                                        <CopyButton text={act.customer_name} className={styles.copy} />
+                                    )}
+                                </td>
                                 <td>{act.device_model || "—"}</td>
-                                <td>{act.serial_number || "—"}</td>
+                                <td className={styles.copyCell}>
+                                    {act.serial_number || "—"}
+                                    {act.serial_number && (
+                                        <CopyButton text={act.serial_number} className={styles.copy} />
+                                    )}
+                                </td>
                                 <td>{act.engineer_name}</td>
                                 <td>{act.created_at.slice(0, 10)}</td>
                                 <td>

@@ -93,20 +93,22 @@
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .primaryButton {
-    border: none;
-    color: #ffffff;
-    background: #2563eb;
+    border: 1px solid #d1d5db;
+    color: #000000;
+    background: #f9fafb;
 }
 
 .primaryButton:hover {
-    background: #1d4ed8;
+    background: #f3f4f6;
 }
 
 .primaryButton:disabled {
-    background: #93c5fd;
+    background: #f9fafb;
+    color: #9ca3af;
     cursor: default;
 }
 

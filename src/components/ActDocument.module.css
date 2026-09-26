@@ -1,8 +1,10 @@
 .act {
-    padding: 32px 40px;
+    position: relative;
+    padding: 24px 32px;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .actTitle {
@@ -15,14 +17,14 @@
 }
 
 .actNumber {
-    margin: 4px 0 0;
+    margin: 4px 0 12px;
     color: #6b7280;
     font-size: 13px;
     text-align: center;
 }
 
 .customerBlock {
-    margin-top: 20px;
+    margin-bottom: 8px;
     text-align: center;
 }
 
@@ -32,8 +34,8 @@
 }
 
 .customerName {
-    margin-top: 4px;
-    padding-bottom: 6px;
+    margin-top: 2px;
+    padding-bottom: 4px;
     border-bottom: 1px solid #d1d5db;
     color: #111827;
     font-size: 17px;
@@ -41,25 +43,69 @@
 }
 
 .section {
-    margin-top: 24px;
+    margin-bottom: 8px;
 }
 
 .sectionTitle {
-    margin: 0 0 10px;
+    margin: 0 0 8px;
     color: #1f2937;
     font-size: 14px;
     font-weight: 600;
+    text-align: center;
 }
 
+/* Сведения об аппарате: 2×2 — модель и серийный номер, ниже счётчики. */
+.deviceGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.deviceItem {
+    padding: 2px 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #f9fafb;
+    text-align: center;
+}
+
+.deviceLabel {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.deviceValue {
+    margin-top: 0;
+    color: #1f2937;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+/* Скруглённые углы не работают с border-collapse: collapse, поэтому
+   рамка у самой таблицы, а у ячеек только линии справа и снизу —
+   так внутренние линии остаются одинарными. */
 .table {
     width: 100%;
-    border-collapse: collapse;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
 }
 
 .table td {
-    padding: 8px 10px;
-    border: 1px solid #e5e7eb;
+    padding: 2px 6px;
+    border-right: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
     font-size: 14px;
+}
+
+.table td:last-child {
+    border-right: none;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 .table .label {
@@ -74,11 +120,79 @@
 
 .text {
     margin: 0;
-    padding: 12px;
+    padding: 4px 8px;
     border: 1px solid #e5e7eb;
     border-radius: 6px;
     background: #f9fafb;
     color: #1f2937;
     font-size: 14px;
     white-space: pre-line;
+}
+
+.action {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+}
+
+/* Заголовок не заходит под кнопку в углу: равные отступы слева и справа,
+   чтобы он оставался по центру. */
+.withAction .actTitle,
+.withAction .actNumber {
+    padding: 0 140px;
+}
+
+/* Состояние аппарата — между ЗИП и строкой «Инженер / Дата работ».
+   В отличие от остальных секций выровнено по левому краю. */
+.condition,
+.condition .sectionTitle {
+    text-align: left;
+}
+
+/* Тот же шрифт, что у текста работ, но без серого поля. */
+.conditionValue {
+    color: #1f2937;
+    font-size: 14px;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    padding-top: 12px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.footerRight {
+    text-align: right;
+}
+
+.footerLabel {
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.footerValue {
+    margin-top: 2px;
+    color: #111827;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) {
+    .act {
+        padding: 24px 16px;
+    }
+
+    .action {
+        position: static;
+        margin-bottom: 12px;
+        text-align: right;
+    }
+
+    .withAction .actTitle,
+    .withAction .actNumber {
+        padding: 0;
+    }
+
 }

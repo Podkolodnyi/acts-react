@@ -1,0 +1,98 @@
+.search {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.search input {
+    flex: 1;
+    min-width: 0;
+}
+
+.hint {
+    margin: 0 0 8px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* Значок «копировать» у серийного номера и клиента виден только при
+   наведении на саму ячейку (и пока на нём фокус с клавиатуры). */
+.serial {
+    white-space: nowrap;
+}
+
+.copy {
+    margin-left: 4px;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.serial:hover .copy,
+.copy:focus-visible {
+    opacity: 1;
+}
+
+.rowActions {
+    white-space: nowrap;
+}
+
+.rowActions > * + * {
+    margin-left: 6px;
+}
+
+/* Карточка аппарата: подписи над значениями, сеткой по две колонки. */
+.info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 24px;
+    margin-bottom: 20px;
+    padding: 20px 24px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.infoLabel {
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.infoValue {
+    color: #1f2937;
+    font-size: 15px;
+    overflow-wrap: anywhere;
+}
+
+.sectionTitle {
+    margin: 0 0 8px;
+    color: #1f2937;
+    font-size: 17px;
+}
+
+.back {
+    display: inline-block;
+    margin-bottom: 12px;
+    color: #6b7280;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.back:hover {
+    color: #374151;
+}
+
+@media (max-width: 600px) {
+    .search {
+        flex-direction: column;
+    }
+
+    .info {
+        grid-template-columns: 1fr;
+    }
+}

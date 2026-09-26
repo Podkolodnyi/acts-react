@@ -1,7 +1,11 @@
 import type { Material } from "../api/types";
 import styles from "./MaterialsEditor.module.css";
 
-const EMPTY_MATERIAL: Material = { name: "", article: "", quantity: "" };
+// Новая строка сразу получает количество 1.
+const EMPTY_MATERIAL: Material = { name: "", article: "", quantity: "1" };
+
+// Допустимое количество: от 1 до 10 (сервер проверяет то же самое).
+const QUANTITIES = Array.from({ length: 10 }, (_, i) => String(i + 1));
 
 interface MaterialsEditorProps {
     items: Material[];
@@ -9,7 +13,7 @@ interface MaterialsEditorProps {
 }
 
 // Таблица ЗИП: строки «Наименование / Артикул / Кол-во».
-// Пустые строки сервер при сохранении отбрасывает сам.
+// Строки без наименования и артикула сервер при сохранении отбрасывает.
 export function MaterialsEditor({ items, onChange }: MaterialsEditorProps) {
     function updateItem(index: number, field: keyof Material, value: string) {
         onChange(
@@ -61,13 +65,19 @@ export function MaterialsEditor({ items, onChange }: MaterialsEditorProps) {
                                     />
                                 </td>
                                 <td>
-                                    <input
+                                    <select
                                         className={styles.input}
                                         value={item.quantity}
                                         onChange={(event) =>
                                             updateItem(index, "quantity", event.target.value)
                                         }
-                                    />
+                                    >
+                                        {QUANTITIES.map((value) => (
+                                            <option key={value} value={value}>
+                                                {value}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </td>
                                 <td>
                                     <button

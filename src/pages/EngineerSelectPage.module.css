@@ -37,6 +37,7 @@
     font-size: 14px;
     text-align: left;
     cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .option:hover {
@@ -54,7 +55,7 @@
     padding: 10px 12px;
     border: 1px solid #d1d5db;
     border-radius: 6px;
-    background: #ffffff;
+    background: #f9fafb;
     font: inherit;
     font-size: 14px;
     color: #1f2937;
@@ -62,18 +63,26 @@
 
 .input:focus {
     outline: none;
-    border-color: #2563eb;
+    border-color: #6b7280;
 }
 
 .link {
-    color: #2563eb;
+    align-self: center;
+    display: inline-block;
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #374151;
     font-size: 14px;
+    font-weight: 500;
     text-align: center;
     text-decoration: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .link:hover {
-    text-decoration: underline;
+    background: #f9fafb;
 }
 
 .back {
@@ -92,21 +101,23 @@
 }
 
 .submit {
-    padding: 10px 16px;
-    border: none;
+    padding: 9px 15px;
+    border: 1px solid #d1d5db;
     border-radius: 6px;
-    color: #ffffff;
-    background: #2563eb;
+    color: #000000;
+    background: #f9fafb;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .submit:hover {
-    background: #1d4ed8;
+    background: #f3f4f6;
 }
 
 .submit:disabled {
-    background: #93c5fd;
+    background: #f9fafb;
+    color: #9ca3af;
     cursor: not-allowed;
 }

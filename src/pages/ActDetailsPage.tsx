@@ -98,14 +98,6 @@ export function ActDetailsPage() {
                             Отремонтирован
                         </Link>
                     )}
-                    {act.can_edit && (
-                        <Link
-                            className={styles.secondaryButton}
-                            to={`/acts/${act.id}/edit`}
-                        >
-                            Редактировать
-                        </Link>
-                    )}
                     {!act.is_deleted && <ActStateBadge state={act.state} />}
                 </div>
             </div>
@@ -137,7 +129,19 @@ export function ActDetailsPage() {
                 </p>
             )}
 
-            <ActDocument act={act} />
+            <ActDocument
+                act={act}
+                action={
+                    act.can_edit && (
+                        <Link
+                            className={styles.secondaryButton}
+                            to={`/acts/${act.id}/edit`}
+                        >
+                            Редактировать
+                        </Link>
+                    )
+                }
+            />
 
             {act.can_delete && (
                 <div className={styles.bottomActions}>

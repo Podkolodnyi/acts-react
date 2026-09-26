@@ -104,3 +104,59 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* Нативные элементы форм без синего.
+   accent-color — цвет чекбоксов и радиокнопок. */
+:root {
+  accent-color: #374151;
+}
+
+/* Выпадающие списки: без base-select браузер рисует список сам,
+   с системной синей подсветкой выбранного пункта. Там, где base-select
+   не поддерживается (например, Firefox), останется обычный список. */
+@supports (appearance: base-select) {
+  select,
+  ::picker(select) {
+    appearance: base-select;
+  }
+
+  ::picker(select) {
+    margin-top: 2px;
+    padding: 4px 0;
+    border: 1px solid rgba(209, 213, 219, 0.8);
+    border-radius: 6px;
+    /* Полупрозрачный «матовый» фон: размытие не даёт тексту списка
+       смешиваться с тем, что под ним. */
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Такая же маленькая серая стрелка, как у поля с поиском (SearchSelect). */
+  select::picker-icon {
+    content: "▾";
+    color: #6b7280;
+    font-size: 12px;
+  }
+
+  option {
+    padding: 6px 12px;
+    color: #1f2937;
+    font-size: 14px;
+  }
+
+  option::checkmark {
+    display: none;
+  }
+
+  option:hover,
+  option:focus-visible {
+    outline: none;
+    background: rgba(17, 24, 39, 0.05);
+  }
+
+  option:checked {
+    background: rgba(17, 24, 39, 0.09);
+    font-weight: 500;
+  }
+}

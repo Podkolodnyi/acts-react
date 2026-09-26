@@ -1,0 +1,23 @@
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: none;
+    color: #6b7280;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: rgba(17, 24, 39, 0.06);
+    color: #111827;
+}
+
+.copied {
+    color: #111827;
+}

@@ -38,12 +38,12 @@ export interface Device {
   address: string;
 }
 
-// "standard" — обычный акт, "thermo" — ремонт узла терморегистрации.
+// "standard" — обычный акт, "thermo" — ремонт узла термозакрепления.
 export type ActNumberType = "standard" | "thermo";
 
 export type DeviceCondition = "Работает" | "Не работает";
 
-// Бейдж акта. У актов терморегистрации состояния нет — null.
+// Бейдж акта. У актов термозакрепления состояния нет — null.
 export type ActState = "working" | "broken" | "repaired";
 
 export interface LinkedAct {
@@ -55,6 +55,13 @@ export interface Material {
   name: string;
   article: string;
   quantity: string;
+}
+
+// Результат поиска по справочнику аппаратов (страница «Аппараты»).
+export interface DeviceCatalogResult {
+  items: Device[];
+  total: number;   // сколько всего совпадений
+  limit: number;   // сколько максимум отдаёт сервер
 }
 
 export interface ActListItem {
@@ -174,4 +181,32 @@ export interface ActCounters {
 export interface ActStats {
   total: ActCounters;
   month: ActCounters;
+}
+
+// Заявка Intraservice, найденная по серийному номеру.
+// model и customer сервер уже вытащил из полей заявки (или пусто).
+export interface IntraserviceTask {
+  id: number;
+  url: string;
+  type: string;
+  name: string;
+  created: string;
+  model: string;
+  customer: string;
+  sap_id: string;
+}
+
+// Временная карточка аппарата из заявки Intraservice (аппарата нет в справочнике).
+export interface IntraserviceDevice extends IntraserviceTask {
+  serial_number: string;
+  acts: ActListItem[];
+}
+
+// Карточка аппарата: данные справочника и все акты с этим серийником.
+export interface DeviceDetail extends Device {
+  sap_id: string;
+  mvz: string;
+  object_format: string;
+  source: string;
+  acts: ActListItem[];
 }

@@ -12,7 +12,7 @@ interface ActStateBadgeProps {
 }
 
 export function ActStateBadge({ state }: ActStateBadgeProps) {
-    // У актов терморегистрации состояния нет — бейдж не рисуем.
+    // У актов термозакрепления состояния нет — бейдж не рисуем.
     if (!state) return null;
 
     return (

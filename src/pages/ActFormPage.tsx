@@ -1,9 +1,11 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { Link, useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router";
 import { createAct, getAct, repairAct, updateAct } from "../api/acts";
 import { ApiError } from "../api/client";
-import { searchDevices } from "../api/devices";
+import { getDevice, searchDevices } from "../api/devices";
+import { searchIntraservice } from "../api/intraservice";
 import { ChangesDialog } from "../components/ChangesDialog";
+import { DatePicker } from "../components/DatePicker";
 import { MaterialsEditor } from "../components/MaterialsEditor";
 import { useSession } from "../session/session-context";
 import { getActChanges, type ActChange } from "../utils/actChanges";
@@ -14,12 +16,13 @@ import type {
     ActPayload,
     Device,
     DeviceCondition,
+    IntraserviceTask,
     Material,
 } from "../api/types";
 import styles from "./ActFormPage.module.css";
 
 // new        — новый обычный акт
-// new-thermo — новый акт ремонта узла терморегистрации
+// new-thermo — новый акт ремонта узла термозакрепления
 // edit       — редактирование существующего акта
 // repair     — копия акта «Не работает» с состоянием «Работает»
 export type ActFormMode = "new" | "new-thermo" | "edit" | "repair";
@@ -49,6 +52,12 @@ const EMPTY_FIELDS: ActFields = {
 
 const CONDITIONS: DeviceCondition[] = ["Работает", "Не работает"];
 
+// 2026-09-17T07:25:46 → 17.09.2026
+function formatTaskDate(value: string): string {
+    const [year, month, day] = value.slice(0, 10).split("-");
+    return year && month && day ? `${day}.${month}.${year}` : "";
+}
+
 // Сегодняшняя дата в формате YYYY-MM-DD по местному времени.
 // toISOString() не подходит: он даёт дату по UTC.
 function today(): string {
@@ -73,18 +82,43 @@ interface ActFormPageProps {
 
 export function ActFormPage({ mode }: ActFormPageProps) {
     const { id } = useParams<{ id: string }>();
+    // /acts/new?device=<id> — новый акт по аппарату из справочника.
+    const [searchParams] = useSearchParams();
+    const deviceParam = mode === "new" ? searchParams.get("device") : null;
+    const deviceId = deviceParam ? Number(deviceParam) : null;
+    // /acts/new?serial=…&model=…&customer=…&task=… — новый акт по заявке
+    // Intraservice со страницы «Аппараты».
+    const prefill: Partial<ActFields> =
+        mode === "new"
+            ? {
+                  serial_number: (searchParams.get("serial") ?? "").toUpperCase(),
+                  device_model: searchParams.get("model") ?? "",
+                  customer_name: searchParams.get("customer") ?? "",
+                  intraservice_task_id: searchParams.get("task") ?? "",
+              }
+            : {};
 
     // key заставляет React создать форму заново при переходе, например,
     // с /acts/new на /acts/new-thermo — иначе старые значения полей остались бы.
-    return <ActForm key={`${mode}-${id ?? ""}`} mode={mode} actId={id ? Number(id) : null} />;
+    return (
+        <ActForm
+            key={`${mode}-${id ?? ""}-${deviceId ?? ""}-${searchParams.toString()}`}
+            mode={mode}
+            actId={id ? Number(id) : null}
+            deviceId={deviceId}
+            prefill={prefill}
+        />
+    );
 }
 
 interface ActFormProps {
     mode: ActFormMode;
     actId: number | null;
+    deviceId: number | null;
+    prefill: Partial<ActFields>;
 }
 
-function ActForm({ mode, actId }: ActFormProps) {
+function ActForm({ mode, actId, deviceId, prefill }: ActFormProps) {
     const navigate = useNavigate();
     const { engineer } = useSession();
     const needsSource = mode === "edit" || mode === "repair";
@@ -96,10 +130,12 @@ function ActForm({ mode, actId }: ActFormProps) {
     const [loading, setLoading] = useState(needsSource);
     const [loadError, setLoadError] = useState<string | null>(null);
 
-    const [fields, setFields] = useState<ActFields>({
+    const [fields, setFields] = useState<ActFields>(() => ({
         ...EMPTY_FIELDS,
         work_date: today(),
-    });
+        // Пустые значения из ссылки не перетирают поля по умолчанию.
+        ...Object.fromEntries(Object.entries(prefill).filter(([, value]) => value)),
+    }));
     const [condition, setCondition] = useState<DeviceCondition | "">("");
     const [materials, setMaterials] = useState<Material[]>([]);
     const [sourceDeviceId, setSourceDeviceId] = useState<number | null>(null);
@@ -107,6 +143,9 @@ function ActForm({ mode, actId }: ActFormProps) {
 
     const [devices, setDevices] = useState<Device[] | null>(null);
     const [searching, setSearching] = useState(false);
+    // Заявки Intraservice — ищем, только если в справочнике ничего нет.
+    const [tasks, setTasks] = useState<IntraserviceTask[] | null>(null);
+    const [tasksError, setTasksError] = useState<string | null>(null);
 
     const [error, setError] = useState<string | null>(null);
     const [submitting, setSubmitting] = useState(false);
@@ -151,6 +190,32 @@ function ActForm({ mode, actId }: ActFormProps) {
         };
     }, [needsSource, actId, mode]);
 
+    // Новый акт по аппарату из справочника: подставляем его данные.
+    useEffect(() => {
+        if (deviceId === null) return;
+        let ignore = false;
+
+        getDevice(deviceId)
+            .then((device) => {
+                if (ignore) return;
+                setFields((prev) => ({
+                    ...prev,
+                    customer_name: device.customer_name,
+                    device_model: device.device_model,
+                    serial_number: device.serial_number.toUpperCase(),
+                    address: device.address,
+                }));
+                setSourceDeviceId(device.id);
+            })
+            .catch(() => {
+                // Аппарат не найден — просто пустая форма.
+            });
+
+        return () => {
+            ignore = true;
+        };
+    }, [deviceId]);
+
     const isThermo =
         mode === "new-thermo" || source?.number_type === "thermo";
 
@@ -163,13 +228,36 @@ function ActForm({ mode, actId }: ActFormProps) {
         if (!query) return;
 
         setSearching(true);
+        setTasks(null);
+        setTasksError(null);
         try {
-            setDevices(await searchDevices(query));
-        } catch {
-            setDevices([]);
+            const found = await searchDevices(query).catch(() => []);
+            setDevices(found);
+            if (found.length === 0) {
+                try {
+                    setTasks((await searchIntraservice(query)).tasks);
+                } catch (err) {
+                    setTasksError(
+                        extractErrorMessage(err, "Не удалось выполнить поиск в Intraservice"),
+                    );
+                }
+            }
         } finally {
             setSearching(false);
         }
+    }
+
+    // Из заявки берём только модель и клиента (если сервер их нашёл)
+    // и запоминаем номер заявки в акте.
+    function handleTaskPick(task: IntraserviceTask) {
+        setFields((prev) => ({
+            ...prev,
+            device_model: task.model || prev.device_model,
+            customer_name: task.customer || prev.customer_name,
+            intraservice_task_id: String(task.id),
+        }));
+        setDevices(null);
+        setTasks(null);
     }
 
     function handleDevicePick(device: Device) {
@@ -177,7 +265,7 @@ function ActForm({ mode, actId }: ActFormProps) {
             ...prev,
             customer_name: device.customer_name,
             device_model: device.device_model,
-            serial_number: device.serial_number,
+            serial_number: device.serial_number.toUpperCase(),
             address: device.address,
         }));
         setSourceDeviceId(device.id);
@@ -274,7 +362,7 @@ function ActForm({ mode, actId }: ActFormProps) {
         mode === "new"
             ? "Новый акт"
             : mode === "new-thermo"
-              ? "Новый акт ремонта узла терморегистрации"
+              ? "Новый акт ремонта узла термозакрепления"
               : mode === "edit"
                 ? `Редактирование акта ${source?.act_number ?? ""}`
                 : `Ремонт по акту ${source?.act_number ?? ""}`;
@@ -286,7 +374,21 @@ function ActForm({ mode, actId }: ActFormProps) {
             </Link>
 
             <form className={styles.form} onSubmit={handleSubmit}>
-                <h2 className={styles.title}>{title}</h2>
+                <div className={styles.header}>
+                    <h2 className={styles.title}>{title}</h2>
+
+                    {/* Переход между двумя видами нового акта (без сохранения). */}
+                    {mode === "new" && (
+                        <Link className={styles.switchLink} to="/acts/new-thermo">
+                            Создать акт ремонта узла термозакрепления
+                        </Link>
+                    )}
+                    {mode === "new-thermo" && (
+                        <Link className={styles.switchLink} to="/acts/new">
+                            Создать обычный акт
+                        </Link>
+                    )}
+                </div>
 
                 {mode === "repair" && (
                     <p className={styles.hint}>
@@ -340,7 +442,10 @@ function ActForm({ mode, actId }: ActFormProps) {
                                     required
                                     value={fields.serial_number}
                                     onChange={(event) => {
-                                        setField("serial_number", event.target.value);
+                                        setField(
+                                            "serial_number",
+                                            event.target.value.toUpperCase(),
+                                        );
                                         // Серийник поменяли вручную — связь со
                                         // справочником больше не актуальна.
                                         setSourceDeviceId(null);
@@ -359,9 +464,44 @@ function ActForm({ mode, actId }: ActFormProps) {
                             {devices !== null && (
                                 <div className={styles.deviceResults}>
                                     {devices.length === 0 ? (
-                                        <p className={styles.deviceEmpty}>
-                                            Аппарат не найден — заполните данные вручную.
-                                        </p>
+                                        <>
+                                            <p className={styles.deviceEmpty}>
+                                                {searching
+                                                    ? "В справочнике не найдено, ищем в Intraservice..."
+                                                    : tasksError
+                                                      ? tasksError
+                                                      : tasks && tasks.length > 0
+                                                        ? "В справочнике не найдено. Заявки в Intraservice:"
+                                                        : "Не найдено ни в справочнике, ни в Intraservice — заполните данные вручную."}
+                                            </p>
+                                            {tasks?.map((task) => (
+                                                <div key={task.id} className={styles.taskItem}>
+                                                    <button
+                                                        className={styles.taskPick}
+                                                        type="button"
+                                                        onClick={() => handleTaskPick(task)}
+                                                    >
+                                                        <strong>№ {task.id}</strong>
+                                                        {" · "}
+                                                        {task.type || "заявка"}
+                                                        {task.created && ` · ${formatTaskDate(task.created)}`}
+                                                        <span className={styles.deviceAddress}>
+                                                            {task.model || "модель не указана"}
+                                                            {" · "}
+                                                            {task.customer || "клиент не указан"}
+                                                        </span>
+                                                    </button>
+                                                    <a
+                                                        className={styles.taskLink}
+                                                        href={task.url}
+                                                        target="_blank"
+                                                        rel="noreferrer"
+                                                    >
+                                                        Открыть
+                                                    </a>
+                                                </div>
+                                            ))}
+                                        </>
                                     ) : (
                                         devices.map((device) => (
                                             <button
@@ -424,16 +564,15 @@ function ActForm({ mode, actId }: ActFormProps) {
                     </>
                 )}
 
-                <label className={`${styles.field} ${styles.dateField}`}>
+                <div className={`${styles.field} ${styles.dateField}`}>
                     <span className={styles.label}>Дата работ *</span>
-                    <input
-                        className={styles.input}
-                        type="date"
+                    <DatePicker
                         required
                         value={fields.work_date}
-                        onChange={(event) => setField("work_date", event.target.value)}
+                        onChange={(iso) => setField("work_date", iso)}
+                        inputClassName={styles.input}
                     />
-                </label>
+                </div>
 
                 {!isThermo && (
                     <>

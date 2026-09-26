@@ -50,6 +50,17 @@ export function AppLayout() {
                     </NavLink>
 
                     <NavLink
+                        to="/devices"
+                        className={({ isActive }) =>
+                            isActive
+                                ? `${styles.link} ${styles.active}`
+                                : styles.link
+                        }
+                    >
+                        Аппараты
+                    </NavLink>
+
+                    <NavLink
                         to="/settings"
                         className={({ isActive }) =>
                             isActive

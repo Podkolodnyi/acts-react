@@ -22,6 +22,7 @@
     background: #ffffff;
     color: #6b7280;
     text-align: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .form {
@@ -32,6 +33,32 @@
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+/* Белая кнопка, как «Редактировать» в карточке акта. */
+.switchLink {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.switchLink:hover {
+    background: #f9fafb;
 }
 
 .title {
@@ -45,8 +72,8 @@
     margin: 0;
     padding: 12px 14px;
     border-radius: 6px;
-    background: #eff6ff;
-    color: #1e40af;
+    background: #f3f4f6;
+    color: #374151;
     font-size: 14px;
     line-height: 1.5;
 }
@@ -92,7 +119,7 @@
     padding: 9px 10px;
     border: 1px solid #d1d5db;
     border-radius: 6px;
-    background: #ffffff;
+    background: #f9fafb;
     font: inherit;
     font-size: 14px;
     color: #1f2937;
@@ -100,7 +127,7 @@
 
 .input:focus {
     outline: none;
-    border-color: #2563eb;
+    border-color: #6b7280;
 }
 
 .textarea {
@@ -153,7 +180,53 @@
 }
 
 .deviceItem:hover {
-    background: #eff6ff;
+    background: #f3f4f6;
+}
+
+/* Заявка Intraservice: вся строка выбирает заявку, «Открыть» — ссылка в Intraservice. */
+.taskItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-right: 10px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.taskItem:last-child {
+    border-bottom: none;
+}
+
+.taskPick {
+    flex: 1;
+    padding: 10px 12px;
+    border: none;
+    background: none;
+    color: #1f2937;
+    font: inherit;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.taskPick:hover {
+    background: #f3f4f6;
+}
+
+.taskLink {
+    flex-shrink: 0;
+    padding: 4px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.taskLink:hover {
+    background: #f9fafb;
 }
 
 .deviceAddress {
@@ -214,21 +287,23 @@
     font-weight: 500;
     white-space: nowrap;
     cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .primaryButton {
-    padding: 10px 16px;
-    border: none;
-    color: #ffffff;
-    background: #2563eb;
+    padding: 9px 15px;
+    border: 1px solid #d1d5db;
+    color: #000000;
+    background: #f9fafb;
 }
 
 .primaryButton:hover {
-    background: #1d4ed8;
+    background: #f3f4f6;
 }
 
 .primaryButton:disabled {
-    background: #93c5fd;
+    background: #f9fafb;
+    color: #9ca3af;
     cursor: default;
 }
 
@@ -249,6 +324,14 @@
 }
 
 @media (max-width: 600px) {
+    .header {
+        flex-direction: column-reverse;
+    }
+
+    .switchLink {
+        align-self: flex-end;
+    }
+
     .form {
         padding: 20px 16px;
     }

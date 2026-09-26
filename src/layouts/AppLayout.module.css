@@ -37,15 +37,16 @@
     color: #6b7280;
     text-decoration: none;
     font-size: 14px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
 }
 
 .link:hover {
-    color: #2563eb;
+    color: #111827;
 }
 
 .active {
-    color: #2563eb;
-    font-weight: 600;
+    color: #000000;
+    font-weight: 700;
 }
 
 .userPanel {
@@ -68,6 +69,7 @@
     cursor: pointer;
     font: inherit;
     font-size: 14px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .logoutButton:hover {
@@ -105,12 +107,13 @@
 
 .sidebarLink:hover {
     background: #f3f4f6;
-    color: #2563eb;
+    color: #111827;
 }
 
 .sidebarLink.active {
-    background: #eff6ff;
-    color: #2563eb;
+    background: #f3f4f6;
+    color: #000000;
+    font-weight: 700;
 }
 
 .content {

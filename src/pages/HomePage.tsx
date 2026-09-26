@@ -82,7 +82,7 @@ export function HomePage() {
                 </article>
 
                 <article className={styles.card}>
-                    <span className={styles.cardLabel}>Узлы терморегистрации</span>
+                    <span className={styles.cardLabel}>Узлы термозакрепления</span>
                     <strong className={styles.cardValue}>
                         {counters ? counters.thermo : "…"}
                     </strong>

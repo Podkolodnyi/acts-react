@@ -11,6 +11,9 @@ import {AdminEngineersPage} from "./pages/AdminEngineersPage.tsx";
 import {ActsPage} from "./pages/ActsPage.tsx";
 import {ActDetailsPage} from "./pages/ActDetailsPage.tsx";
 import {ActFormPage} from "./pages/ActFormPage.tsx";
+import {DevicesPage} from "./pages/DevicesPage.tsx";
+import {DevicePage} from "./pages/DevicePage.tsx";
+import {IntraserviceDevicePage} from "./pages/IntraserviceDevicePage.tsx";
 import {AdminDeletedActsPage} from "./pages/AdminDeletedActsPage.tsx";
 import {AdminDevicesPage} from "./pages/AdminDevicesPage.tsx";
 import {AdminActVersionsPage} from "./pages/AdminActVersionsPage.tsx";
@@ -76,6 +79,18 @@ export const router = createBrowserRouter([
                     {
                         path: "acts",
                         element: <ActsPage/>
+                    },
+                    {
+                        path: "devices",
+                        element: <DevicesPage/>
+                    },
+                    {
+                        path: "devices/:id",
+                        element: <DevicePage/>
+                    },
+                    {
+                        path: "devices/intraservice/:taskId",
+                        element: <IntraserviceDevicePage/>
                     },
                     {
                         path: "acts/:id",

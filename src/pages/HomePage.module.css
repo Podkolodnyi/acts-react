@@ -37,16 +37,18 @@
     text-decoration: none;
     font-size: 14px;
     font-weight: 500;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .primaryButton {
-    padding: 10px 16px;
-    color: #ffffff;
-    background: #2563eb;
+    border: 1px solid #d1d5db;
+    padding: 9px 15px;
+    color: #000000;
+    background: #f9fafb;
 }
 
 .primaryButton:hover {
-    background: #1d4ed8;
+    background: #f3f4f6;
 }
 
 .periodSwitch {
@@ -89,6 +91,7 @@
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .cardLabel {
@@ -120,6 +123,7 @@
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .panelHeader {
@@ -138,13 +142,24 @@
 }
 
 .panelLink {
-    color: #2563eb;
-    font-size: 14px;
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #374151;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
     text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 .panelLink:hover {
-    text-decoration: underline;
+    background: #f9fafb;
 }
 
 .emptyState {
@@ -190,6 +205,7 @@
     gap: 4px;
     padding: 14px 0;
     border-bottom: 1px solid #f3f4f6;
+    color: #1f2937;
     text-decoration: none;
 }
 
@@ -198,7 +214,8 @@
 }
 
 .quickAction:hover .quickActionTitle {
-    color: #2563eb;
+    color: #111827;
+    text-decoration: underline;
 }
 
 .quickActionTitle {
