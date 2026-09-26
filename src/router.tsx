@@ -10,6 +10,7 @@ import {AdminPendingPage} from "./pages/AdminPendingPage.tsx";
 import {AdminEngineersPage} from "./pages/AdminEngineersPage.tsx";
 import {ActsPage} from "./pages/ActsPage.tsx";
 import {ActDetailsPage} from "./pages/ActDetailsPage.tsx";
+import {ActFormPage} from "./pages/ActFormPage.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -60,11 +61,23 @@ export const router = createBrowserRouter([
                         path: "acts/:id",
                         element: <ActDetailsPage/>
                     },
-/*                    {
+                    {
                         path: "acts/new",
-                        element: <ActFormPage />,
+                        element: <ActFormPage mode="new"/>
                     },
                     {
+                        path: "acts/new-thermo",
+                        element: <ActFormPage mode="new-thermo"/>
+                    },
+                    {
+                        path: "acts/:id/edit",
+                        element: <ActFormPage mode="edit"/>
+                    },
+                    {
+                        path: "acts/:id/repair",
+                        element: <ActFormPage mode="repair"/>
+                    },
+/*                    {
                         path: "settings",
                         element: <SettingsPage />,
                     },*/

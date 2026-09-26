@@ -20,22 +20,55 @@
     color: #374151;
 }
 
-.badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 999px;
-    font-size: 12px;
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.primaryButton,
+.secondaryButton {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 6px;
+    font-size: 14px;
     font-weight: 500;
+    text-decoration: none;
 }
 
-.badge.draft {
-    color: #92400e;
-    background: #fef3c7;
+.primaryButton {
+    padding: 8px 14px;
+    color: #ffffff;
+    background: #2563eb;
 }
 
-.badge.completed {
-    color: #166534;
-    background: #dcfce7;
+.primaryButton:hover {
+    background: #1d4ed8;
+}
+
+.secondaryButton {
+    padding: 7px 12px;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    background: #ffffff;
+}
+
+.secondaryButton:hover {
+    background: #f9fafb;
+}
+
+.linkNote {
+    margin: 0 0 12px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    background: #eff6ff;
+    color: #1e40af;
+    font-size: 14px;
+}
+
+.linkNote a {
+    color: #1d4ed8;
+    font-weight: 600;
 }
 
 .empty {

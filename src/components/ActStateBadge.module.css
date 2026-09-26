@@ -1,0 +1,23 @@
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.working {
+    color: #166534;
+    background: #dcfce7;
+}
+
+.broken {
+    color: #991b1b;
+    background: #fee2e2;
+}
+
+.repaired {
+    color: #1e40af;
+    background: #dbeafe;
+}

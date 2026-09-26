@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { getActs } from "../api/acts";
-import type { ActListItem } from "../api/types";
+import { getActs, getActStats } from "../api/acts";
+import type { ActListItem, ActStats } from "../api/types";
 import styles from "./HomePage.module.css";
 
 export function HomePage() {
     const [acts, setActs] = useState<ActListItem[]>([]);
+    const [stats, setStats] = useState<ActStats | null>(null);
+    const [period, setPeriod] = useState<"total" | "month">("total");
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         getActs()
             .then(setActs)
             .finally(() => setLoading(false));
+        getActStats().then(setStats);
     }, []);
 
-    const draftCount = acts.filter((act) => act.status === "draft").length;
-    const completedCount = acts.filter((act) => act.status === "completed").length;
+    // Сервер отдаёт оба набора счётчиков сразу — переключение без запроса.
+    const counters = stats?.[period];
+    const periodDescription = period === "total" ? "За весь период" : "За текущий месяц";
     const recentActs = acts.slice(0, 5);
 
     return (
@@ -41,47 +45,48 @@ export function HomePage() {
                 </div>
             </div>
 
+            <div className={styles.periodSwitch}>
+                <button
+                    className={`${styles.periodButton} ${period === "total" ? styles.periodActive : ""}`}
+                    type="button"
+                    onClick={() => setPeriod("total")}
+                >
+                    Всего
+                </button>
+                <button
+                    className={`${styles.periodButton} ${period === "month" ? styles.periodActive : ""}`}
+                    type="button"
+                    onClick={() => setPeriod("month")}
+                >
+                    За месяц
+                </button>
+            </div>
+
             <div className={styles.cards}>
                 <article className={styles.card}>
-          <span className={styles.cardLabel}>
-            Всего актов
-          </span>
-
+                    <span className={styles.cardLabel}>Работает</span>
                     <strong className={styles.cardValue}>
-                        {loading ? "…" : acts.length}
+                        {counters ? counters.working : "…"}
                     </strong>
-
-                    <span className={styles.cardDescription}>
-            За весь период
-          </span>
+                    <span className={styles.cardDescription}>{periodDescription}</span>
                 </article>
 
                 <article className={styles.card}>
-          <span className={styles.cardLabel}>
-            Черновики
-          </span>
-
+                    <span className={styles.cardLabel}>Не работает</span>
                     <strong className={styles.cardValue}>
-                        {loading ? "…" : draftCount}
+                        {counters ? counters.broken : "…"}
                     </strong>
-
                     <span className={styles.cardDescription}>
-            Требуют завершения
-          </span>
+                        {periodDescription}, включая отремонтированные
+                    </span>
                 </article>
 
                 <article className={styles.card}>
-          <span className={styles.cardLabel}>
-            Завершенные
-          </span>
-
+                    <span className={styles.cardLabel}>Узлы терморегистрации</span>
                     <strong className={styles.cardValue}>
-                        {loading ? "…" : completedCount}
+                        {counters ? counters.thermo : "…"}
                     </strong>
-
-                    <span className={styles.cardDescription}>
-            Готовы к выгрузке
-          </span>
+                    <span className={styles.cardDescription}>{periodDescription}</span>
                 </article>
             </div>
 

@@ -78,6 +78,40 @@
     border-color: #2563eb;
 }
 
+.filtersThermo {
+    grid-template-columns: 2fr 1fr 1fr;
+}
+
+.tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.tab {
+    margin-bottom: -1px;
+    padding: 10px 16px;
+    border-bottom: 2px solid transparent;
+    color: #6b7280;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.tab:hover {
+    color: #374151;
+}
+
+.tabActive {
+    border-bottom-color: #2563eb;
+    color: #2563eb;
+}
+
+.tabActive:hover {
+    color: #2563eb;
+}
+
 .filterActions {
     grid-column: 1 / -1;
     display: flex;
@@ -117,26 +151,12 @@
     color: #1f2937;
 }
 
+.table td:first-child {
+    white-space: nowrap;
+}
+
 .table tr:last-child td {
     border-bottom: none;
-}
-
-.badge {
-    display: inline-block;
-    padding: 3px 10px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.badge.draft {
-    color: #92400e;
-    background: #fef3c7;
-}
-
-.badge.completed {
-    color: #166534;
-    background: #dcfce7;
 }
 
 .link {

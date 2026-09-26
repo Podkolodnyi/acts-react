@@ -2,16 +2,13 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router";
 import { getActs } from "../api/acts";
 import { getEngineers } from "../api/engineers";
+import { ActStateBadge } from "../components/ActStateBadge";
 import { formatEngineerName } from "../utils/engineerName";
 import type { ActListItem, EngineerOption } from "../api/types";
 import styles from "./ActsPage.module.css";
 
-const STATUS_LABELS: Record<string, string> = {
-    draft: "Черновик",
-    completed: "Завершён",
-};
-
-const FILTER_KEYS = ["q", "engineer", "status", "date_from", "date_to"];
+const STANDARD_FILTER_KEYS = ["q", "engineer", "state", "date_from", "date_to"];
+const THERMO_FILTER_KEYS = ["customer", "date_from", "date_to"];
 
 export function ActsPage() {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -19,9 +16,12 @@ export function ActsPage() {
     const [engineers, setEngineers] = useState<EngineerOption[]>([]);
     const [loading, setLoading] = useState(true);
 
+    // Вкладка хранится в URL (?type=thermo), поэтому переживает обновление страницы.
+    const isThermo = searchParams.get("type") === "thermo";
     const q = searchParams.get("q") ?? "";
+    const customer = searchParams.get("customer") ?? "";
     const engineer = searchParams.get("engineer") ?? "";
-    const status = searchParams.get("status") ?? "";
+    const state = searchParams.get("state") ?? "";
     const dateFrom = searchParams.get("date_from") ?? "";
     const dateTo = searchParams.get("date_to") ?? "";
 
@@ -32,13 +32,22 @@ export function ActsPage() {
     useEffect(() => {
         let ignore = false;
 
-        getActs({
-            q: q || undefined,
-            engineer: engineer || undefined,
-            status: status === "draft" || status === "completed" ? status : undefined,
-            date_from: dateFrom || undefined,
-            date_to: dateTo || undefined,
-        }).then((data) => {
+        getActs(
+            isThermo
+                ? {
+                      type: "thermo",
+                      customer: customer || undefined,
+                      date_from: dateFrom || undefined,
+                      date_to: dateTo || undefined,
+                  }
+                : {
+                      q: q || undefined,
+                      engineer: engineer || undefined,
+                      state: state === "working" || state === "broken" ? state : undefined,
+                      date_from: dateFrom || undefined,
+                      date_to: dateTo || undefined,
+                  },
+        ).then((data) => {
             if (!ignore) {
                 setActs(data);
                 setLoading(false);
@@ -48,14 +57,15 @@ export function ActsPage() {
         return () => {
             ignore = true;
         };
-    }, [q, engineer, status, dateFrom, dateTo]);
+    }, [isThermo, q, customer, engineer, state, dateFrom, dateTo]);
 
     function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const form = new FormData(event.currentTarget);
         const next = new URLSearchParams();
+        if (isThermo) next.set("type", "thermo");
 
-        for (const key of FILTER_KEYS) {
+        for (const key of isThermo ? THERMO_FILTER_KEYS : STANDARD_FILTER_KEYS) {
             const value = form.get(key);
             if (value) next.set(key, String(value));
         }
@@ -64,7 +74,7 @@ export function ActsPage() {
     }
 
     function handleReset() {
-        setSearchParams({});
+        setSearchParams(isThermo ? { type: "thermo" } : {});
     }
 
     return (
@@ -72,37 +82,75 @@ export function ActsPage() {
             <div className={styles.header}>
                 <h2 className={styles.title}>Акты</h2>
 
-                <Link className={styles.primaryButton} to="/acts/new">
-                    Создать акт
+                {isThermo ? (
+                    <Link className={styles.primaryButton} to="/acts/new-thermo">
+                        Создать акт ремонта узла терморегистрации
+                    </Link>
+                ) : (
+                    <Link className={styles.primaryButton} to="/acts/new">
+                        Создать акт
+                    </Link>
+                )}
+            </div>
+
+            <div className={styles.tabs}>
+                <Link
+                    className={`${styles.tab} ${!isThermo ? styles.tabActive : ""}`}
+                    to="/acts"
+                >
+                    Обычные акты
+                </Link>
+                <Link
+                    className={`${styles.tab} ${isThermo ? styles.tabActive : ""}`}
+                    to="/acts?type=thermo"
+                >
+                    Узлы терморегистрации
                 </Link>
             </div>
 
-            <form className={styles.filters} onSubmit={handleSubmit}>
-                <input
-                    className={styles.input}
-                    name="q"
-                    defaultValue={q}
-                    placeholder="Номер, серийник, клиент, модель"
-                />
+            {/* key пересоздаёт форму при смене URL: поля с defaultValue
+                иначе не обновились бы после «Сбросить» или смены вкладки. */}
+            <form
+                key={searchParams.toString()}
+                className={`${styles.filters} ${isThermo ? styles.filtersThermo : ""}`}
+                onSubmit={handleSubmit}
+            >
+                {isThermo ? (
+                    <input
+                        className={styles.input}
+                        name="customer"
+                        defaultValue={customer}
+                        placeholder="Клиент"
+                    />
+                ) : (
+                    <>
+                        <input
+                            className={styles.input}
+                            name="q"
+                            defaultValue={q}
+                            placeholder="Номер, серийник, клиент, модель"
+                        />
 
-                <select
-                    className={styles.input}
-                    name="engineer"
-                    defaultValue={engineer}
-                >
-                    <option value="">Все инженеры</option>
-                    {engineers.map((item) => (
-                        <option key={item.id} value={item.id}>
-                            {formatEngineerName(item)}
-                        </option>
-                    ))}
-                </select>
+                        <select
+                            className={styles.input}
+                            name="engineer"
+                            defaultValue={engineer}
+                        >
+                            <option value="">Все инженеры</option>
+                            {engineers.map((item) => (
+                                <option key={item.id} value={item.id}>
+                                    {formatEngineerName(item)}
+                                </option>
+                            ))}
+                        </select>
 
-                <select className={styles.input} name="status" defaultValue={status}>
-                    <option value="">Все статусы</option>
-                    <option value="draft">Черновик</option>
-                    <option value="completed">Завершён</option>
-                </select>
+                        <select className={styles.input} name="state" defaultValue={state}>
+                            <option value="">Все состояния</option>
+                            <option value="working">Работает</option>
+                            <option value="broken">Не работает</option>
+                        </select>
+                    </>
+                )}
 
                 <input
                     className={styles.input}
@@ -137,12 +185,40 @@ export function ActsPage() {
                 <p className={styles.empty}>Загрузка...</p>
             ) : acts.length === 0 ? (
                 <p className={styles.empty}>Акты не найдены.</p>
+            ) : isThermo ? (
+                <table className={styles.table}>
+                    <thead>
+                        <tr>
+                            <th>Номер</th>
+                            <th>Клиент</th>
+                            <th>Инженер</th>
+                            <th>Дата создания</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {acts.map((act) => (
+                            <tr key={act.id}>
+                                <td>{act.act_number || "—"}</td>
+                                <td>{act.customer_name || "—"}</td>
+                                <td>{act.engineer_name}</td>
+                                <td>{act.created_at.slice(0, 10)}</td>
+                                <td>
+                                    <Link className={styles.link} to={`/acts/${act.id}`}>
+                                        Открыть
+                                    </Link>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             ) : (
                 <table className={styles.table}>
                     <thead>
                         <tr>
                             <th>Номер</th>
-                            <th>Статус</th>
+                            <th>Состояние</th>
                             <th>Клиент</th>
                             <th>Модель</th>
                             <th>Серийный номер</th>
@@ -157,11 +233,7 @@ export function ActsPage() {
                             <tr key={act.id}>
                                 <td>{act.act_number || "—"}</td>
                                 <td>
-                                    <span
-                                        className={`${styles.badge} ${styles[act.status] ?? ""}`}
-                                    >
-                                        {STATUS_LABELS[act.status] ?? act.status}
-                                    </span>
+                                    <ActStateBadge state={act.state} />
                                 </td>
                                 <td>{act.customer_name || "—"}</td>
                                 <td>{act.device_model || "—"}</td>

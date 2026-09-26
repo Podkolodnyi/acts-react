@@ -38,6 +38,13 @@ export function apiPost<T>(path: string, data: unknown): Promise<T> {
   });
 }
 
+export function apiPut<T>(path: string, data: unknown): Promise<T> {
+  return request<T>(path, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
+
 export function apiDelete<T>(path: string): Promise<T> {
   return request<T>(path, { method: "DELETE" });
 }

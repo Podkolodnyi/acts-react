@@ -1,0 +1,78 @@
+.table {
+    width: 100%;
+    margin-bottom: 8px;
+    border-collapse: collapse;
+}
+
+.table th {
+    padding: 0 4px 6px;
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: left;
+}
+
+.table td {
+    padding: 3px 4px;
+}
+
+.articleColumn {
+    width: 25%;
+}
+
+.quantityColumn {
+    width: 90px;
+}
+
+.removeColumn {
+    width: 36px;
+}
+
+.input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #ffffff;
+    font: inherit;
+    font-size: 14px;
+    color: #1f2937;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+.removeButton {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #9ca3af;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.removeButton:hover {
+    border-color: #fca5a5;
+    color: #dc2626;
+}
+
+.addButton {
+    padding: 7px 12px;
+    border: 1px dashed #d1d5db;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #374151;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.addButton:hover {
+    border-color: #2563eb;
+    color: #2563eb;
+}
